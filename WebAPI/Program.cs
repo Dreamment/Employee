@@ -1,5 +1,7 @@
 using WebAPI.Repositories;
 using WebAPI.Repositories.Contracts;
+using WebAPI.Services;
+using WebAPI.Services.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
+builder.Services.AddScoped<IServiceManager, ServiceManager>();
 
 var app = builder.Build();
 
