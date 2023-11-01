@@ -1,4 +1,5 @@
 ﻿using WebAPI.Entities;
+using WebAPI.Repositories.Contracts;
 
 namespace WebAPI.Repositories
 {

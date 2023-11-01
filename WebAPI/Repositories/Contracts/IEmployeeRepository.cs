@@ -1,6 +1,6 @@
 ﻿using WebAPI.Entities;
 
-namespace WebAPI.Repositories
+namespace WebAPI.Repositories.Contracts
 {
     public interface IEmployeeRepository
     {

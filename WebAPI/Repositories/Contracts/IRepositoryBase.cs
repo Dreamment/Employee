@@ -1,8 +1,8 @@
 ﻿using System.Linq.Expressions;
 
-namespace WebAPI.Repositories
+namespace WebAPI.Repositories.Contracts
 {
-    public interface IRepositoryBase<T> where T: class
+    public interface IRepositoryBase<T> where T : class
     {
         IQueryable<T> FindAll(bool trackchanges);
         IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackchanges);

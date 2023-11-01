@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using WebAPI.Repositories.Contracts;
 
 namespace WebAPI.Repositories
 {
