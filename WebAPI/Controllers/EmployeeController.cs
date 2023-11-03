@@ -98,8 +98,6 @@ namespace WebAPI.Controllers
 
             if (employeePatch.Operations.Any(op => op.path == "managerId"))
             {
-                if (employeePatch.Operations.FirstOrDefault(op => op.path == "managerId").value == null)
-                    return BadRequest("ManagerId is null");
                 int newManagerId = Convert.ToInt32(employeePatch.Operations.FirstOrDefault(op => op.path == "managerId").value);
                 var entity = _serviceManager.Employee.GetEmployeeById(newManagerId, false);
                 if (entity == null)
@@ -109,6 +107,14 @@ namespace WebAPI.Controllers
                         $" as the manager to the employee with ID {id}" +
                         $" because the employee with ID {id}" +
                         $" is the manager of employee with ID {newManagerId}.");
+            }
+            if(employeePatch.Operations.Any(op => op.path == "registrationNumber"))
+            {
+                string newRegistrationNumber = employeePatch.Operations.FirstOrDefault(op => op.path == "registrationNumber").value.ToString();
+                if (_serviceManager.Employee.CheckEmployeeByRegistrationNumber(newRegistrationNumber, false))
+                {
+                    return BadRequest("This Registration Number is being used by another employee.");
+                }
             }
             _serviceManager.Employee.PartiallyUpdateEmployee(employeeToUpdateDto, employeePatch);
 
