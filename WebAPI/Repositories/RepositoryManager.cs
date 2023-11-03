@@ -15,6 +15,6 @@ namespace WebAPI.Repositories
 
         public IEmployeeRepository Employee => _employeeRepository.Value;
 
-        public async Task Save() => await _repositoryContext.SaveChangesAsync();
+        public async Task SaveAsync() => await _repositoryContext.SaveChangesAsync();
     }
 }

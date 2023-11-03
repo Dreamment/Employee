@@ -3,6 +3,6 @@
     public interface IRepositoryManager
     {
         IEmployeeRepository Employee { get; }
-        Task Save();
+        Task SaveAsync();
     }
 }
