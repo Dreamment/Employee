@@ -19,14 +19,14 @@ namespace WebAPI.Services
             _mapper = mapper;
         }
 
-        public bool CreateEmployee(Employee employee)
+        public int? CreateEmployee(EmployeeDtoForCreate employeeDto)
         {
-            if (employee == null)
-                return false;
+            if (employeeDto == null)
+                return null;
 
-            _repositoryManager.Employee.CreateEmployee(employee);
+            var id = _repositoryManager.Employee.CreateEmployee(_mapper.Map<Employee>(employeeDto));
             _repositoryManager.Save();
-            return true;
+            return id;
         }
 
         public bool DeleteEmployee(int id, bool trackChanges)

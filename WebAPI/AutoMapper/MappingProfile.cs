@@ -9,6 +9,7 @@ namespace WebAPI.AutoMapper
         public MappingProfile()
         {
             CreateMap<EmployeeDtoForUpdate, Employee>().ReverseMap();
+            CreateMap<EmployeeDtoForCreate, Employee>();
         }
     }
 }

@@ -6,7 +6,7 @@ namespace WebAPI.Repositories.Contracts
     {
         IQueryable<Employee> GetAllEmployees(bool trackchanges);
         Employee GetEmployeeById(int id, bool trackchanges);
-        void CreateEmployee(Employee employee);
+        int CreateEmployee(Employee employee);
         void UpdateEmployee(Employee employee);
         void DeleteEmployee(Employee employee);
     }

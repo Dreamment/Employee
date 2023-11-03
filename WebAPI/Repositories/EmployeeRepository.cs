@@ -9,8 +9,11 @@ namespace WebAPI.Repositories
         {
             
         }
-        public void CreateEmployee(Employee employee) 
-            => Create(employee);
+        public int CreateEmployee(Employee employee)
+        {
+            Create(employee);
+            return employee.Id;
+        }
 
         public void DeleteEmployee(Employee employee) 
             => Delete(employee);

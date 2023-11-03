@@ -37,14 +37,16 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost(Name = "CreateEmployee")]
-        public IActionResult CreateEmployee([FromBody] Employee employee)
+        public IActionResult CreateEmployee([FromBody] EmployeeDtoForCreate employeeDto)
         {
-            if (employee == null)
+            if (employeeDto == null)
                 return BadRequest("Employee object is null");
             if (!ModelState.IsValid)
                 return BadRequest("Invalid model object");
-            _serviceManager.Employee.CreateEmployee(employee);
-            return CreatedAtRoute("GetEmployeeById", new { id = employee.Id }, employee);
+            var Id = _serviceManager.Employee.CreateEmployee(employeeDto);
+            if (Id == null)
+                return StatusCode(StatusCodes.Status500InternalServerError, "Employee could not be saved");
+            return CreatedAtRoute("GetEmployeeById", new { id = Id }, employeeDto);
         }
 
         [HttpPut("{id:int}", Name = "UpdateEmployee")]
