@@ -58,7 +58,7 @@ namespace WebAPI.Controllers
                 return BadRequest("Invalid model object");
             if (employeeDto.ManagerId != null)
             {
-                var entity = _serviceManager.Employee.GetEmployeeById((int)employeeDto.ManagerId, true);
+                var entity = _serviceManager.Employee.GetEmployeeById((int)employeeDto.ManagerId, false);
                 if (entity == null)
                     return NotFound($"The manager with ID {employeeDto.ManagerId} could not be found.");
                 if (entity.ManagerId == id)
@@ -86,8 +86,8 @@ namespace WebAPI.Controllers
         {
             if (employeePatch == null)
                 return BadRequest("Employee object is null");
-            var employeeToUpdate = _serviceManager.Employee.GetEmployeeById(id, true);
-            if (employeeToUpdate == null)
+            var employeeToUpdateDto = _serviceManager.Employee.GetEmployeeById(id, false);
+            if (employeeToUpdateDto == null)
                 return NotFound();
 
             if (employeePatch.Operations.Any(op => op.path == "managerId"))
@@ -95,7 +95,7 @@ namespace WebAPI.Controllers
                 if (employeePatch.Operations.FirstOrDefault(op => op.path == "managerId").value == null)
                     return BadRequest("ManagerId is null");
                 int newManagerId = Convert.ToInt32(employeePatch.Operations.FirstOrDefault(op => op.path == "managerId").value);
-                var entity = _serviceManager.Employee.GetEmployeeById(newManagerId, true);
+                var entity = _serviceManager.Employee.GetEmployeeById(newManagerId, false);
                 if (entity == null)
                     return NotFound($"Manager with ID {newManagerId} could not be found.");
                 if (entity.ManagerId == id)
@@ -104,8 +104,7 @@ namespace WebAPI.Controllers
                         $" because the employee with ID {id}" +
                         $" is the manager of employee with ID {newManagerId}.");
             }
-
-            _serviceManager.Employee.PartiallyUpdateEmployee(employeeToUpdate, employeePatch);
+            _serviceManager.Employee.PartiallyUpdateEmployee(employeeToUpdateDto, employeePatch);
 
             return NoContent();
         }

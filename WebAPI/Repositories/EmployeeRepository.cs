@@ -24,6 +24,9 @@ namespace WebAPI.Repositories
         public Employee GetEmployeeById(int id, bool trackchanges) 
             => FindByCondition(e => e.Id.Equals(id), trackchanges).SingleOrDefault();
 
+        public List<int> GetSubordinates(int id, bool trackchanges) 
+            => FindByCondition(e => e.ManagerId.Equals(id), trackchanges).Select(e => e.Id).ToList();
+            
         public void UpdateEmployee(Employee employee) 
             => Update(employee);
     }

@@ -9,5 +9,6 @@ namespace WebAPI.Repositories.Contracts
         int CreateEmployee(Employee employee);
         void UpdateEmployee(Employee employee);
         void DeleteEmployee(Employee employee);
+        List<int> GetSubordinates(int id, bool trackchanges);
     }
 }

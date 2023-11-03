@@ -10,6 +10,8 @@ namespace WebAPI.AutoMapper
         {
             CreateMap<EmployeeDtoForUpdate, Employee>().ReverseMap();
             CreateMap<EmployeeDtoForCreate, Employee>();
+            CreateMap<Employee, EmployeeDtoForGet>().ReverseMap();
+            CreateMap<EmployeeDtoForGet, EmployeeDtoForUpdate>();
         }
     }
 }

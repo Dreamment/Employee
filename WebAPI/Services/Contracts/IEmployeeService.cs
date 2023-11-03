@@ -6,11 +6,12 @@ namespace WebAPI.Services.Contracts
 {
     public interface IEmployeeService
     {
-        IEnumerable<Employee> GetAllEmployees(bool trackChanges);
-        Employee GetEmployeeById(int id, bool trackChanges);
+        IEnumerable<EmployeeDtoForGet> GetAllEmployees(bool trackChanges);
+        EmployeeDtoForGet GetEmployeeById(int id, bool trackChanges);
         int? CreateEmployee(EmployeeDtoForCreate employeeDto);
         bool UpdateEmployee(int id, EmployeeDtoForUpdate employeeDto, bool trackChanges);
         bool DeleteEmployee(int id, bool trackChanges);
-        void PartiallyUpdateEmployee(Employee employeeToUpdate, JsonPatchDocument<EmployeeDtoForUpdate> employeePatch);
+        void PartiallyUpdateEmployee(EmployeeDtoForGet employeeToUpdateDtoGet, JsonPatchDocument<EmployeeDtoForUpdate> employeePatch);
+        List<int> GetSuborditanes(int id, bool trackChanges);
     }
 }
