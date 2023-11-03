@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace WebAPI.Entities
 {
@@ -19,15 +19,7 @@ namespace WebAPI.Entities
         [RegularExpression(@"^[a-zA-Z0-9]+$")]
         public string RegistrationNumber { get; init; }
 
+        [AllowNull]
         public int? ManagerId { get; init; }
-
-        public ICollection<int>? SubordinatesIds { get; init; }
-
-
-        [ForeignKey("ManagerId")]
-        public Employee? Manager { get; init; }
-
-        [ForeignKey("SubordinatesIds")]
-        public ICollection<Employee>? Subordinates { get; init; }
     }
 }
