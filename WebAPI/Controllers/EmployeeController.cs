@@ -54,6 +54,17 @@ namespace WebAPI.Controllers
                 return BadRequest("Employee object is null");
             if (!ModelState.IsValid)
                 return BadRequest("Invalid model object");
+            if (employeeDto.ManagerId != null)
+            {
+                var entity = _serviceManager.Employee.GetEmployeeById((int)employeeDto.ManagerId, true);
+                if (entity == null)
+                    return NotFound($"The manager with ID {employeeDto.ManagerId} could not be found.");
+                if (entity.ManagerId == id)
+                    return BadRequest($"You cannot assign the employee with ID {employeeDto.ManagerId}" +
+                        $" as the manager to the employee with ID {id}" +
+                        $" because the employee with ID {id}" +
+                        $" is the manager of employee with ID {employeeDto.ManagerId}.");
+            }
             _serviceManager.Employee.UpdateEmployee(id, employeeDto, false);
             return NoContent();
         }
@@ -76,6 +87,21 @@ namespace WebAPI.Controllers
             var employeeToUpdate = _serviceManager.Employee.GetEmployeeById(id, true);
             if (employeeToUpdate == null)
                 return NotFound();
+
+            if (employeePatch.Operations.Any(op => op.path == "managerId"))
+            {
+                if (employeePatch.Operations.FirstOrDefault(op => op.path == "managerId").value == null)
+                    return BadRequest("ManagerId is null");
+                int newManagerId = Convert.ToInt32(employeePatch.Operations.FirstOrDefault(op => op.path == "managerId").value);
+                var entity = _serviceManager.Employee.GetEmployeeById(newManagerId, true);
+                if (entity == null)
+                    return NotFound($"Manager with ID {newManagerId} could not be found.");
+                if (entity.ManagerId == id)
+                    return BadRequest($"You cannot assign the employee with ID {newManagerId}" +
+                        $" as the manager to the employee with ID {id}" +
+                        $" because the employee with ID {id}" +
+                        $" is the manager of employee with ID {newManagerId}.");
+            }
 
             _serviceManager.Employee.PartiallyUpdateEmployee(employeeToUpdate, employeePatch);
 
