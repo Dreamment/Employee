@@ -11,7 +11,7 @@ namespace WebAPI.Repositories
 
         }
 
-        public async Task<bool> CheckEmployeeByRegistrationNumber(string registrationNumber, bool trackchanges)
+        public async Task<bool> CheckEmployeeByRegistrationNumberAsync(string registrationNumber, bool trackchanges)
         {
             var employee = await FindByCondition(e => e.RegistrationNumber.Equals(registrationNumber), trackchanges).SingleOrDefaultAsync();
             if (employee == null)
@@ -19,7 +19,7 @@ namespace WebAPI.Repositories
             return true;
         }
 
-        public int CreateEmployee(Employee employee)
+        public async Task<int> CreateEmployeeAsync(Employee employee)
         {
             Create(employee);
             return employee.Id;
@@ -31,10 +31,10 @@ namespace WebAPI.Repositories
         public IQueryable<Employee> GetAllEmployees(bool trackchanges)
             => FindAll(trackchanges).OrderBy(e => e.Id);
 
-        public async Task<Employee> GetEmployeeById(int id, bool trackchanges)
+        public async Task<Employee> GetEmployeeByIdAsync(int id, bool trackchanges)
             => await FindByCondition(e => e.Id.Equals(id), trackchanges).SingleOrDefaultAsync();
 
-        public async Task<List<int>> GetSubordinates(int id, bool trackchanges)
+        public async Task<List<int>> GetSubordinatesAsync(int id, bool trackchanges)
             => await FindByCondition(e => e.ManagerId.Equals(id), trackchanges).Select(e => e.Id).ToListAsync();
 
         public void UpdateEmployee(Employee employee)
