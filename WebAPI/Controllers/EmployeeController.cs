@@ -56,6 +56,10 @@ namespace WebAPI.Controllers
                 return BadRequest("Employee object is null");
             if (!ModelState.IsValid)
                 return BadRequest("Invalid model object");
+            if (_serviceManager.Employee.CheckEmployeeByRegistrationNumber(employeeDto.RegistrationNumber, false))
+            {
+                return BadRequest("This Registration Number is being used by another employee.");
+            }
             if (employeeDto.ManagerId != null)
             {
                 var entity = _serviceManager.Employee.GetEmployeeById((int)employeeDto.ManagerId, false);
