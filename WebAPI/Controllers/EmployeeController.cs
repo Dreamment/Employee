@@ -26,7 +26,7 @@ namespace WebAPI.Controllers
             return Ok(employees);
         }
 
-        [HttpGet("{int:id}", Name = "GetEmployeeById")]
+        [HttpGet("{id:int}", Name = "GetEmployeeById")]
         public IActionResult GetEmployeeById([FromRoute(Name = "id")]int id)
         {
             var employee = _serviceManager.Employee.GetEmployeeById(id, false);
@@ -57,7 +57,7 @@ namespace WebAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{int:id}", Name = "DeleteEmployee")]
+        [HttpDelete("{id:int}", Name = "DeleteEmployee")]
         public IActionResult DeleteEmployee([FromRoute(Name = "id")]int id)
         {
             var employee = _serviceManager.Employee.GetEmployeeById(id, false);
@@ -67,7 +67,7 @@ namespace WebAPI.Controllers
             return NoContent();
         }
 
-        [HttpPatch("{int:id}", Name = "PartiallyUpdateEmployee")]
+        [HttpPatch("{id:int}", Name = "PartiallyUpdateEmployee")]
         public IActionResult PartiallyUpdateEmployee([FromRoute(Name = "id")]int id, [FromBody] JsonPatchDocument<Employee> employeePatch)
         {
             if (employeePatch == null)
