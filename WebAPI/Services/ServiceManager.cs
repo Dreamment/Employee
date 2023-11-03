@@ -1,4 +1,5 @@
-﻿using WebAPI.Repositories.Contracts;
+﻿using AutoMapper;
+using WebAPI.Repositories.Contracts;
 using WebAPI.Services.Contracts;
 
 namespace WebAPI.Services
@@ -7,9 +8,9 @@ namespace WebAPI.Services
     {
         private readonly Lazy<IEmployeeService> _employeeService;
 
-        public ServiceManager(IRepositoryManager repositoryManager)
+        public ServiceManager(IRepositoryManager repositoryManager, IMapper mapper)
         {
-            _employeeService = new Lazy<IEmployeeService>(() => new EmployeeManager(repositoryManager));
+            _employeeService = new Lazy<IEmployeeService>(() => new EmployeeManager(repositoryManager, mapper));
         }
 
         public IEmployeeService Employee => _employeeService.Value;

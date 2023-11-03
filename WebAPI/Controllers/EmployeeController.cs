@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using WebAPI.DataTransferObjects;
 using WebAPI.Entities;
 using WebAPI.Services.Contracts;
 
@@ -27,7 +28,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("{id:int}", Name = "GetEmployeeById")]
-        public IActionResult GetEmployeeById([FromRoute(Name = "id")]int id)
+        public IActionResult GetEmployeeById([FromRoute(Name = "id")] int id)
         {
             var employee = _serviceManager.Employee.GetEmployeeById(id, false);
             if (employee == null)
@@ -46,19 +47,19 @@ namespace WebAPI.Controllers
             return CreatedAtRoute("GetEmployeeById", new { id = employee.Id }, employee);
         }
 
-        [HttpPut(Name = "UpdateEmployee")]
-        public IActionResult UpdateEmployee([FromBody] Employee employee)
+        [HttpPut("{id:int}", Name = "UpdateEmployee")]
+        public IActionResult UpdateEmployee([FromRoute(Name = "id")] int id, [FromBody] EmployeeDtoForUpdate employeeDto)
         {
-            if (employee == null)
+            if (employeeDto == null)
                 return BadRequest("Employee object is null");
             if (!ModelState.IsValid)
                 return BadRequest("Invalid model object");
-            _serviceManager.Employee.UpdateEmployee(employee, false);
+            _serviceManager.Employee.UpdateEmployee(id, employeeDto, false);
             return NoContent();
         }
 
         [HttpDelete("{id:int}", Name = "DeleteEmployee")]
-        public IActionResult DeleteEmployee([FromRoute(Name = "id")]int id)
+        public IActionResult DeleteEmployee([FromRoute(Name = "id")] int id)
         {
             var employee = _serviceManager.Employee.GetEmployeeById(id, false);
             if (employee == null)
@@ -68,18 +69,16 @@ namespace WebAPI.Controllers
         }
 
         [HttpPatch("{id:int}", Name = "PartiallyUpdateEmployee")]
-        public IActionResult PartiallyUpdateEmployee([FromRoute(Name = "id")]int id, [FromBody] JsonPatchDocument<Employee> employeePatch)
+        public IActionResult PartiallyUpdateEmployee([FromRoute(Name = "id")] int id, [FromBody] JsonPatchDocument<EmployeeDtoForUpdate> employeePatch)
         {
             if (employeePatch == null)
-                return BadRequest("patchDoc object is null");
+                return BadRequest("Employee object is null");
             var employeeToUpdate = _serviceManager.Employee.GetEmployeeById(id, true);
             if (employeeToUpdate == null)
                 return NotFound();
-            employeePatch.ApplyTo(employeeToUpdate, ModelState);
-            TryValidateModel(employeeToUpdate);
-            if (!ModelState.IsValid)
-                return BadRequest("Invalid model object");
-            _serviceManager.Employee.UpdateEmployee(employeeToUpdate, true);
+
+            _serviceManager.Employee.PartiallyUpdateEmployee(employeeToUpdate, employeePatch);
+
             return NoContent();
         }
     }
