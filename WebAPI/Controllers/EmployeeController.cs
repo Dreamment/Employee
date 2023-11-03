@@ -67,8 +67,10 @@ namespace WebAPI.Controllers
                         $" because the employee with ID {id}" +
                         $" is the manager of employee with ID {employeeDto.ManagerId}.");
             }
-            _serviceManager.Employee.UpdateEmployee(id, employeeDto, false);
-            return NoContent();
+            bool control = _serviceManager.Employee.UpdateEmployee(id, employeeDto, false);
+            if (control)
+                return NoContent();
+            return NotFound();
         }
 
         [HttpDelete("{id:int}", Name = "DeleteEmployee")]
