@@ -9,9 +9,9 @@ namespace WebAPI.Services.Contracts
         Task<IEnumerable<EmployeeDtoForGet>> GetAllEmployeesAsync(bool trackChanges);
         Task<EmployeeDtoForGet> GetEmployeeByIdAsync(int id, bool trackChanges);
         Task<int?> CreateEmployeeAsync(EmployeeDtoForCreate employeeDto);
-        Task<bool> UpdateEmployee(int id, EmployeeDtoForUpdate employeeDto, bool trackChanges);
+        Task<bool> UpdateEmployeeAsync(int id, EmployeeDtoForUpdate employeeDto, bool trackChanges);
         Task<bool> DeleteEmployeeAsync(int id, bool trackChanges);
-        Task PartiallyUpdateEmployee(EmployeeDtoForGet employeeToUpdateDtoGet, JsonPatchDocument<EmployeeDtoForUpdate> employeePatch);
+        Task PartiallyUpdateEmployeeAsync(EmployeeDtoForGet employeeToUpdateDtoGet, JsonPatchDocument<EmployeeDtoForUpdate> employeePatch);
         Task<List<int>> GetSubordinatesAsync(int id, bool trackChanges);
         Task<bool> CheckEmployeeByRegistrationNumberAsync(string registrationNumber, bool trackChanges);
     }

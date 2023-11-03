@@ -69,7 +69,7 @@ namespace WebAPI.Services
         public async Task<List<int>> GetSubordinatesAsync(int id, bool trackChanges)
             => await _repositoryManager.Employee.GetSubordinatesAsync(id, trackChanges);
 
-        public async Task PartiallyUpdateEmployee(EmployeeDtoForGet employeeToUpdateDtoGet, JsonPatchDocument<EmployeeDtoForUpdate> employeePatch)
+        public async Task PartiallyUpdateEmployeeAsync(EmployeeDtoForGet employeeToUpdateDtoGet, JsonPatchDocument<EmployeeDtoForUpdate> employeePatch)
         {
             var employeeDto = _mapper.Map<EmployeeDtoForUpdate>(employeeToUpdateDtoGet);
             employeePatch.ApplyTo(employeeDto);
@@ -78,7 +78,7 @@ namespace WebAPI.Services
             await _repositoryManager.SaveAsync();
         }
 
-        public async Task<bool> UpdateEmployee(int id, EmployeeDtoForUpdate employeeDto, bool trackChanges)
+        public async Task<bool> UpdateEmployeeAsync(int id, EmployeeDtoForUpdate employeeDto, bool trackChanges)
         {
             var employeeToUpdateDto = await GetEmployeeByIdAsync(id, trackChanges);
             if (employeeToUpdateDto == null)
