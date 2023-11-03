@@ -6,13 +6,13 @@ namespace WebAPI.Services.Contracts
 {
     public interface IEmployeeService
     {
-        IEnumerable<EmployeeDtoForGet> GetAllEmployees(bool trackChanges);
-        EmployeeDtoForGet GetEmployeeById(int id, bool trackChanges);
-        int? CreateEmployee(EmployeeDtoForCreate employeeDto);
-        bool UpdateEmployee(int id, EmployeeDtoForUpdate employeeDto, bool trackChanges);
-        bool DeleteEmployee(int id, bool trackChanges);
-        void PartiallyUpdateEmployee(EmployeeDtoForGet employeeToUpdateDtoGet, JsonPatchDocument<EmployeeDtoForUpdate> employeePatch);
-        List<int> GetSuborditanes(int id, bool trackChanges);
-        bool CheckEmployeeByRegistrationNumber(string registrationNumber, bool trackChanges);
+        Task<IEnumerable<EmployeeDtoForGet>> GetAllEmployeesAsync(bool trackChanges);
+        Task<EmployeeDtoForGet> GetEmployeeByIdAsync(int id, bool trackChanges);
+        Task<int?> CreateEmployeeAsync(EmployeeDtoForCreate employeeDto);
+        Task<bool> UpdateEmployee(int id, EmployeeDtoForUpdate employeeDto, bool trackChanges);
+        Task<bool> DeleteEmployeeAsync(int id, bool trackChanges);
+        Task PartiallyUpdateEmployee(EmployeeDtoForGet employeeToUpdateDtoGet, JsonPatchDocument<EmployeeDtoForUpdate> employeePatch);
+        Task<List<int>> GetSubordinatesAsync(int id, bool trackChanges);
+        Task<bool> CheckEmployeeByRegistrationNumberAsync(string registrationNumber, bool trackChanges);
     }
 }
