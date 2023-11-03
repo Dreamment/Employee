@@ -18,6 +18,9 @@ namespace WebAPI.Services
             _mapper = mapper;
         }
 
+        public bool CheckEmployeeByRegistrationNumber(string registrationNumber, bool trackChanges) 
+            => _repositoryManager.Employee.CheckEmployeeByRegistrationNumber(registrationNumber, trackChanges);
+
         public int? CreateEmployee(EmployeeDtoForCreate employeeDto)
         {
             if (employeeDto == null)

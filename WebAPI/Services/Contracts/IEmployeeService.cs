@@ -13,5 +13,6 @@ namespace WebAPI.Services.Contracts
         bool DeleteEmployee(int id, bool trackChanges);
         void PartiallyUpdateEmployee(EmployeeDtoForGet employeeToUpdateDtoGet, JsonPatchDocument<EmployeeDtoForUpdate> employeePatch);
         List<int> GetSuborditanes(int id, bool trackChanges);
+        bool CheckEmployeeByRegistrationNumber(string registrationNumber, bool trackChanges);
     }
 }
