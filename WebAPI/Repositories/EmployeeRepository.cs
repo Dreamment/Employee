@@ -13,31 +13,36 @@ namespace WebAPI.Repositories
 
         public async Task<bool> CheckEmployeeByRegistrationNumberAsync(string registrationNumber, bool trackchanges)
         {
-            var employee = await FindByCondition(e => e.RegistrationNumber.Equals(registrationNumber), trackchanges).SingleOrDefaultAsync();
+            var employee = (await FindByConditionAsync(e => e.RegistrationNumber.Equals(registrationNumber), trackchanges)).SingleOrDefault();
             if (employee == null)
                 return false;
             return true;
         }
 
-        public async Task<int> CreateEmployeeAsync(Employee employee)
+        public async Task CreateEmployeeAsync(Employee employee) 
+            =>await CreateAsync(employee);
+
+        public async Task DeleteEmployeeAsync(Employee employee)
+            => await DeleteAsync(employee);
+
+        public async Task<IEnumerable<Employee>> GetAllEmployeesAsync(bool trackchanges)
         {
-            Create(employee);
-            return employee.Id;
+            var employees = (await FindAllAsync(trackchanges)).OrderBy(e => e.Id).ToList();
+            return employees;
         }
 
-        public void DeleteEmployee(Employee employee)
-            => Delete(employee);
-
-        public IQueryable<Employee> GetAllEmployees(bool trackchanges)
-            => FindAll(trackchanges).OrderBy(e => e.Id);
-
         public async Task<Employee> GetEmployeeByIdAsync(int id, bool trackchanges)
-            => await FindByCondition(e => e.Id.Equals(id), trackchanges).SingleOrDefaultAsync();
+        {
+            var entity = await FindByConditionAsync(e => e.Id.Equals(id), trackchanges);
+            return entity.SingleOrDefault();
+        }
 
         public async Task<List<int>> GetSubordinatesAsync(int id, bool trackchanges)
-            => await FindByCondition(e => e.ManagerId.Equals(id), trackchanges).Select(e => e.Id).ToListAsync();
-
-        public void UpdateEmployee(Employee employee)
-            => Update(employee);
+        {
+            var entity = await FindByConditionAsync(e => e.ManagerId.Equals(id), trackchanges);
+            return entity.Select(e => e.Id).ToList();
+        }
+        public async Task UpdateEmployeeAsync(Employee employee)
+            => await UpdateAsync(employee);
     }
 }

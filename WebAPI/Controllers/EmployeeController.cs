@@ -46,7 +46,8 @@ namespace WebAPI.Controllers
             var Id = await _serviceManager.Employee.CreateEmployeeAsync(employeeDto);
             if (Id == null)
                 return StatusCode(StatusCodes.Status500InternalServerError, "Employee could not be saved");
-            return CreatedAtRoute("GetEmployeeById", new { id = Id }, employeeDto);
+            var employeeDtoForGet = await _serviceManager.Employee.GetEmployeeByIdAsync((int)Id, false);
+            return CreatedAtRoute("GetEmployeeByIdAsync", new { id = employeeDtoForGet.Id }, employeeDtoForGet);
         }
 
         [HttpPut("{id:int}", Name = "UpdateEmployeeAsync")]
@@ -56,6 +57,8 @@ namespace WebAPI.Controllers
                 return BadRequest("Employee object is null");
             if (!ModelState.IsValid)
                 return BadRequest("Invalid model object");
+            if (await _serviceManager.Employee.GetEmployeeByIdAsync(id, false) == null)
+                return NotFound();
             if (await _serviceManager.Employee.CheckEmployeeByRegistrationNumberAsync(employeeDto.RegistrationNumber, false))
             {
                 return BadRequest("This Registration Number is being used by another employee.");
@@ -83,8 +86,10 @@ namespace WebAPI.Controllers
             var employee = await _serviceManager.Employee.GetEmployeeByIdAsync(id, false);
             if (employee == null)
                 return NotFound();
-            await _serviceManager.Employee.DeleteEmployeeAsync(id, false);
-            return NoContent();
+            var check = await _serviceManager.Employee.DeleteEmployeeAsync(id, false);
+            if (check)
+                return NoContent();
+            return StatusCode(StatusCodes.Status500InternalServerError, "Employee could not be deleted");
         }
 
         [HttpPatch("{id:int}", Name = "PartiallyUpdateEmployeeAsync")]
@@ -96,24 +101,42 @@ namespace WebAPI.Controllers
             if (employeeToUpdateDto == null)
                 return NotFound();
 
-            if (employeePatch.Operations.Any(op => op.path == "managerId"))
+            if (employeePatch.Operations.Any(op => op.path.Equals("managerId", StringComparison.OrdinalIgnoreCase)))
             {
-                int newManagerId = Convert.ToInt32(employeePatch.Operations.FirstOrDefault(op => op.path == "managerId").value);
-                var entity = await _serviceManager.Employee.GetEmployeeByIdAsync(newManagerId, false);
-                if (entity == null)
-                    return NotFound($"Manager with ID {newManagerId} could not be found.");
-                if (entity.ManagerId == id)
-                    return BadRequest($"You cannot assign the employee with ID {newManagerId}" +
-                        $" as the manager to the employee with ID {id}" +
-                        $" because the employee with ID {id}" +
-                        $" is the manager of employee with ID {newManagerId}.");
+                int newManagerId = Convert.ToInt32(employeePatch.Operations.FirstOrDefault(op
+                    => op.path.Equals("managerId", StringComparison.OrdinalIgnoreCase)).value);
+                if (newManagerId != 0)
+                {
+                    var entity = await _serviceManager.Employee.GetEmployeeByIdAsync(newManagerId, false);
+                    if (entity == null)
+                        return NotFound($"Manager with ID {newManagerId} could not be found.");
+                    if (entity.ManagerId == id)
+                        return BadRequest($"You cannot assign the employee with ID {newManagerId}" +
+                            $" as the manager to the employee with ID {id}" +
+                            $" because the employee with ID {id}" +
+                            $" is the manager of employee with ID {newManagerId}.");
+                }
             }
-            if (employeePatch.Operations.Any(op => op.path == "registrationNumber"))
+            if (employeePatch.Operations.Any(op => op.path.Equals("registrationNumber", StringComparison.OrdinalIgnoreCase)))
             {
-                string newRegistrationNumber = employeePatch.Operations.FirstOrDefault(op => op.path == "registrationNumber").value.ToString();
+                string newRegistrationNumber = employeePatch.Operations.FirstOrDefault(op => op.path.Equals("registrationNumber", StringComparison.OrdinalIgnoreCase)).value.ToString();
                 if (await _serviceManager.Employee.CheckEmployeeByRegistrationNumberAsync(newRegistrationNumber, false))
                 {
                     return BadRequest("This Registration Number is being used by another employee.");
+                }
+            }
+            foreach (var op in employeePatch.Operations)
+            {
+                List<string> proporties = new List<string>
+                {
+                    "id", "name", "surname", "registrationNumber", "managerId"
+                };
+                foreach (var prop in proporties)
+                {
+                    if (!op.path.Equals(prop, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return BadRequest($"The property {op.path} is wrong.");
+                    }
                 }
             }
             await _serviceManager.Employee.PartiallyUpdateEmployeeAsync(employeeToUpdateDto, employeePatch);

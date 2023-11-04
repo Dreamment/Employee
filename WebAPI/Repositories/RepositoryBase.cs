@@ -13,20 +13,31 @@ namespace WebAPI.Repositories
             _repositoryContext = repositoryContext;
         }
 
-        public void Create(T entity) => _repositoryContext.Set<T>().Add(entity);
+        public async Task CreateAsync(T entity) => await _repositoryContext.Set<T>().AddAsync(entity);
 
-        public void Delete(T entity) => _repositoryContext.Set<T>().Remove(entity);
+        public async Task DeleteAsync(T entity) => _repositoryContext.Set<T>().Remove(entity);
 
-        public IQueryable<T> FindAll(bool trackchanges) => 
-            !trackchanges ? 
-            _repositoryContext.Set<T>().AsNoTracking() : 
-            _repositoryContext.Set<T>();
+        public async Task<IEnumerable<T>> FindAllAsync(bool trackchanges) 
+        {
+            IEnumerable<T> entity;
+            if (!trackchanges)
+            {
+                entity = (IEnumerable<T>)await _repositoryContext.Set<T>().AsNoTracking().ToListAsync();
+            }
+            else
+            {
+                entity = (IEnumerable<T>)await _repositoryContext.Set<T>().ToListAsync();
+            }
+            return entity;
+        }
 
-        public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackchanges) => 
-            !trackchanges ? 
-            _repositoryContext.Set<T>().Where(expression).AsNoTracking() : 
-            _repositoryContext.Set<T>().Where(expression);
+        public async Task<IEnumerable<T>> FindByConditionAsync(Expression<Func<T, bool>> expression, bool trackchanges)
+        {
+            if (!trackchanges)
+                return (IEnumerable<T>)await _repositoryContext.Set<T>().Where(expression).AsNoTracking().ToListAsync();
+            return (IEnumerable<T>)await _repositoryContext.Set<T>().Where(expression).ToListAsync();
+        }
 
-        public void Update(T entity) => _repositoryContext.Set<T>().Update(entity);
+        public async Task UpdateAsync(T entity) => _repositoryContext.Set<T>().Update(entity);
     }
 }

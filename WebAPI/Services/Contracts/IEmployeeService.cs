@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using WebAPI.DataTransferObjects;
-using WebAPI.Entities;
 
 namespace WebAPI.Services.Contracts
 {

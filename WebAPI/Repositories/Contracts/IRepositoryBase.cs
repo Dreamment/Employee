@@ -4,10 +4,10 @@ namespace WebAPI.Repositories.Contracts
 {
     public interface IRepositoryBase<T> where T : class
     {
-        IQueryable<T> FindAll(bool trackchanges);
-        IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackchanges);
-        void Create(T entity);
-        void Update(T entity);
-        void Delete(T entity);
+        Task<IEnumerable<T>> FindAllAsync(bool trackchanges);
+        Task<IEnumerable<T>> FindByConditionAsync(Expression<Func<T, bool>> expression, bool trackchanges);
+        Task CreateAsync(T entity);
+        Task UpdateAsync(T entity);
+        Task DeleteAsync(T entity);
     }
 }

@@ -26,26 +26,32 @@ namespace WebAPI.Services
             if (employeeDto == null)
                 return null;
 
-            var id = await _repositoryManager.Employee.CreateEmployeeAsync(_mapper.Map<Employee>(employeeDto));
+            await _repositoryManager.Employee.CreateEmployeeAsync(_mapper.Map<Employee>(employeeDto));
             await _repositoryManager.SaveAsync();
-            return id;
+            var employees = await _repositoryManager.Employee.GetAllEmployeesAsync(false);
+            foreach (var employee in employees)
+            {
+                if (employee.RegistrationNumber == employeeDto.RegistrationNumber)
+                    return employee.Id;
+            }
+            return null;
         }
 
         public async Task<bool> DeleteEmployeeAsync(int id, bool trackChanges)
         {
-            var employeeToDeleteDto = GetEmployeeByIdAsync(id, trackChanges);
+            var employeeToDeleteDto = await GetEmployeeByIdAsync(id, trackChanges);
             var employeeToDelete = _mapper.Map<Employee>(employeeToDeleteDto);
-            if (employeeToDelete == null)
-                return false;
-            _repositoryManager.Employee.DeleteEmployee(employeeToDelete);
+            await _repositoryManager.Employee.DeleteEmployeeAsync(employeeToDelete);
             await _repositoryManager.SaveAsync();
-            return true;
+            if (await _repositoryManager.Employee.GetEmployeeByIdAsync(id, trackChanges) == null)
+                return true;
+            return false;
 
         }
 
         public async Task<IEnumerable<EmployeeDtoForGet>> GetAllEmployeesAsync(bool trackChanges)
         {
-            var employees = _repositoryManager.Employee.GetAllEmployees(trackChanges);
+            var employees = await _repositoryManager.Employee.GetAllEmployeesAsync(trackChanges);
             var employeesDto = _mapper.Map<IEnumerable<EmployeeDtoForGet>>(employees);
             foreach (var employee in employeesDto)
             {
@@ -74,7 +80,7 @@ namespace WebAPI.Services
             var employeeDto = _mapper.Map<EmployeeDtoForUpdate>(employeeToUpdateDtoGet);
             employeePatch.ApplyTo(employeeDto);
             var employeeToUpdate = _mapper.Map<Employee>(employeeDto);
-            _repositoryManager.Employee.UpdateEmployee(employeeToUpdate);
+            await _repositoryManager.Employee.UpdateEmployeeAsync(employeeToUpdate);
             await _repositoryManager.SaveAsync();
         }
 
@@ -86,7 +92,7 @@ namespace WebAPI.Services
             employeeDto.Id = id;
             var employeeToUpdate = _mapper.Map<Employee>(employeeDto);
             //employee gönder
-            _repositoryManager.Employee.UpdateEmployee(employeeToUpdate);
+            await _repositoryManager.Employee.UpdateEmployeeAsync(employeeToUpdate);
             await _repositoryManager.SaveAsync();
             return true;
         }
