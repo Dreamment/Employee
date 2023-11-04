@@ -43,6 +43,10 @@ namespace WebAPI.Controllers
                 return BadRequest("Employee object is null");
             if (!ModelState.IsValid)
                 return BadRequest("Invalid model object");
+            if (await _serviceManager.Employee.CheckEmployeeByRegistrationNumberAsync(employeeDto.RegistrationNumber, false))
+            {
+                return BadRequest("This Registration Number is being used by another employee.");
+            }
             var Id = await _serviceManager.Employee.CreateEmployeeAsync(employeeDto);
             if (Id == null)
                 return StatusCode(StatusCodes.Status500InternalServerError, "Employee could not be saved");
@@ -131,11 +135,16 @@ namespace WebAPI.Controllers
                 {
                     "id", "name", "surname", "registrationNumber", "managerId"
                 };
+                int count = 0;
                 foreach (var prop in proporties)
                 {
                     if (!op.path.Equals(prop, StringComparison.OrdinalIgnoreCase))
                     {
-                        return BadRequest($"The property {op.path} is wrong.");
+                        count++;
+                    }
+                    if (count == proporties.Count)
+                    {
+                        return BadRequest($"Invalid property {op.path}");
                     }
                 }
             }
